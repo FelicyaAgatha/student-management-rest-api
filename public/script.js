@@ -8,12 +8,19 @@ const inputNama = document.getElementById('nama');
 const inputKelas = document.getElementById('kelas');
 const inputJurusan = document.getElementById('jurusan');
 const inputAlamat = document.getElementById('alamat');
+const inputFoto = document.getElementById('foto');
+const fotoLama = document.getElementById('fotoLama');
+
+const previewFoto = document.getElementById('previewFoto');
+const previewPlaceholder = document.getElementById('previewPlaceholder');
+const btnHapusPilihanFoto = document.getElementById('btnHapusPilihanFoto');
 
 const errorNis = document.getElementById('errorNis');
 const errorNama = document.getElementById('errorNama');
 const errorKelas = document.getElementById('errorKelas');
 const errorJurusan = document.getElementById('errorJurusan');
 const errorAlamat = document.getElementById('errorAlamat');
+const errorFoto = document.getElementById('errorFoto');
 
 const judulForm = document.getElementById('judulForm');
 const btnSimpan = document.getElementById('btnSimpan');
@@ -52,6 +59,7 @@ let semuaSiswa = [];
 let siswaTersaring = [];
 let halamanAktif = 1;
 let dataPerHalaman = 5;
+let previewObjectUrl = null;
 
 function escapeHtml(teks) {
     return String(teks ?? '')
@@ -115,8 +123,37 @@ function aturStatus(terhubung) {
     }
 }
 
+function tampilkanPreviewFoto(url) {
+    if (previewObjectUrl) {
+        URL.revokeObjectURL(previewObjectUrl);
+        previewObjectUrl = null;
+    }
+
+    if (url) {
+        previewFoto.src = url;
+        previewFoto.style.display = 'block';
+        previewPlaceholder.style.display = 'none';
+    } else {
+        previewFoto.removeAttribute('src');
+        previewFoto.style.display = 'none';
+        previewPlaceholder.style.display = 'block';
+    }
+}
+
+function tampilkanPreviewFile(file) {
+    if (previewObjectUrl) {
+        URL.revokeObjectURL(previewObjectUrl);
+    }
+
+    previewObjectUrl = URL.createObjectURL(file);
+    previewFoto.src = previewObjectUrl;
+    previewFoto.style.display = 'block';
+    previewPlaceholder.style.display = 'none';
+}
+
 function bukaModal() {
     hapusPesanModal();
+
     modalSiswa.classList.add('active');
     document.body.classList.add('modal-open');
 
@@ -134,12 +171,15 @@ function tutupModal() {
 
 function resetForm() {
     studentForm.reset();
+
     siswaId.value = '';
+    fotoLama.value = '';
 
     judulForm.textContent = 'Tambah Siswa';
     btnSimpan.textContent = 'Simpan Data';
     btnSimpan.disabled = false;
 
+    tampilkanPreviewFoto(null);
     hapusSemuaError();
     hapusPesanModal();
 }
@@ -150,12 +190,14 @@ function hapusSemuaError() {
     errorKelas.textContent = '';
     errorJurusan.textContent = '';
     errorAlamat.textContent = '';
+    errorFoto.textContent = '';
 
     inputNis.classList.remove('input-invalid');
     inputNama.classList.remove('input-invalid');
     inputKelas.classList.remove('input-invalid');
     inputJurusan.classList.remove('input-invalid');
     inputAlamat.classList.remove('input-invalid');
+    inputFoto.classList.remove('input-invalid');
 }
 
 function beriError(input, tempatError, message) {
@@ -242,13 +284,43 @@ function validasiForm(dataSiswa) {
         valid = false;
     }
 
+    const fileFoto = inputFoto.files[0];
+
+    if (fileFoto) {
+        const formatDiizinkan = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        if (!formatDiizinkan.includes(fileFoto.type)) {
+            beriError(
+                inputFoto,
+                errorFoto,
+                'Foto harus berformat JPG, PNG, atau WEBP'
+            );
+
+            valid = false;
+        }
+
+        if (fileFoto.size > 2 * 1024 * 1024) {
+            beriError(
+                inputFoto,
+                errorFoto,
+                'Ukuran foto maksimal 2 MB'
+            );
+
+            valid = false;
+        }
+    }
+
     return valid;
 }
 
 async function ambilDataSiswa() {
     tbodySiswa.innerHTML = `
         <tr>
-            <td colspan="7" class="empty">
+            <td colspan="8" class="empty">
                 <div class="table-loading">
                     <div class="spinner-small"></div>
                     <span>Memuat data...</span>
@@ -266,7 +338,8 @@ async function ambilDataSiswa() {
 
         if (!response.ok) {
             throw new Error(
-                hasil.message || 'Data siswa gagal diambil'
+                hasil.message ||
+                'Data siswa gagal diambil'
             );
         }
 
@@ -290,7 +363,7 @@ async function ambilDataSiswa() {
 
         tbodySiswa.innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
                     Data gagal diambil. Pastikan Express dan MySQL berjalan.
                 </td>
             </tr>
@@ -345,9 +418,17 @@ function terapkanFilter() {
     const kelasDipilih = filterKelas.value;
 
     siswaTersaring = semuaSiswa.filter(function (siswa) {
-        const nama = String(siswa.nama ?? '').toLowerCase();
-        const nis = String(siswa.nis ?? '').toLowerCase();
-        const kelas = String(siswa.kelas ?? '');
+        const nama = String(
+            siswa.nama ?? ''
+        ).toLowerCase();
+
+        const nis = String(
+            siswa.nis ?? ''
+        ).toLowerCase();
+
+        const kelas = String(
+            siswa.kelas ?? ''
+        );
 
         const cocokPencarian =
             nama.includes(kataKunci) ||
@@ -360,12 +441,14 @@ function terapkanFilter() {
         return cocokPencarian && cocokKelas;
     });
 
-    jumlahData.textContent = `${siswaTersaring.length} data`;
+    jumlahData.textContent =
+        `${siswaTersaring.length} data`;
 
     const totalHalaman = Math.max(
         1,
         Math.ceil(
-            siswaTersaring.length / dataPerHalaman
+            siswaTersaring.length /
+            dataPerHalaman
         )
     );
 
@@ -383,7 +466,7 @@ function tampilkanTabel() {
     if (siswaTersaring.length === 0) {
         tbodySiswa.innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
                     Data siswa tidak ditemukan.
                 </td>
             </tr>
@@ -407,8 +490,32 @@ function tampilkanTabel() {
         const nomor = indeksAwal + index + 1;
         const baris = document.createElement('tr');
 
+        const hurufAwal = String(
+            siswa.nama || 'S'
+        )
+            .charAt(0)
+            .toUpperCase();
+
+        const tampilanFoto = siswa.foto_url
+            ? `
+                <img
+                    src="${escapeHtml(siswa.foto_url)}"
+                    alt="Foto siswa"
+                    class="student-photo"
+                >
+            `
+            : `
+                <div class="student-photo-placeholder">
+                    ${escapeHtml(hurufAwal)}
+                </div>
+            `;
+
         baris.innerHTML = `
             <td>${nomor}</td>
+
+            <td>
+                ${tampilanFoto}
+            </td>
 
             <td>
                 <span class="nis-badge">
@@ -423,9 +530,7 @@ function tampilkanTabel() {
             </td>
 
             <td>${escapeHtml(siswa.kelas)}</td>
-
             <td>${escapeHtml(siswa.jurusan)}</td>
-
             <td>${escapeHtml(siswa.alamat)}</td>
 
             <td>
@@ -465,7 +570,10 @@ function tampilkanPagination() {
     const indeksAwal =
         totalData === 0
             ? 0
-            : (halamanAktif - 1) * dataPerHalaman + 1;
+            : (
+                (halamanAktif - 1) *
+                dataPerHalaman
+            ) + 1;
 
     const indeksAkhir = Math.min(
         halamanAktif * dataPerHalaman,
@@ -487,12 +595,17 @@ function tampilkanPagination() {
 
     nomorHalaman.innerHTML = '';
 
+    if (totalData === 0) {
+        return;
+    }
+
     for (
         let nomor = 1;
         nomor <= totalHalaman;
         nomor++
     ) {
-        const tombolNomor = document.createElement('button');
+        const tombolNomor =
+            document.createElement('button');
 
         tombolNomor.type = 'button';
         tombolNomor.textContent = nomor;
@@ -522,6 +635,76 @@ function tampilkanPagination() {
     }
 }
 
+inputFoto.addEventListener('change', function () {
+    hapusSemuaError();
+
+    const fileFoto = inputFoto.files[0];
+
+    if (!fileFoto) {
+        tampilkanPreviewFoto(
+            fotoLama.value || null
+        );
+
+        return;
+    }
+
+    const formatDiizinkan = [
+        'image/jpeg',
+        'image/png',
+        'image/webp'
+    ];
+
+    if (!formatDiizinkan.includes(fileFoto.type)) {
+        beriError(
+            inputFoto,
+            errorFoto,
+            'Foto harus berformat JPG, PNG, atau WEBP'
+        );
+
+        inputFoto.value = '';
+
+        tampilkanPreviewFoto(
+            fotoLama.value || null
+        );
+
+        return;
+    }
+
+    if (fileFoto.size > 2 * 1024 * 1024) {
+        beriError(
+            inputFoto,
+            errorFoto,
+            'Ukuran foto maksimal 2 MB'
+        );
+
+        inputFoto.value = '';
+
+        tampilkanPreviewFoto(
+            fotoLama.value || null
+        );
+
+        return;
+    }
+
+    tampilkanPreviewFile(fileFoto);
+});
+
+btnHapusPilihanFoto.addEventListener(
+    'click',
+    function () {
+        inputFoto.value = '';
+        errorFoto.textContent = '';
+
+        inputFoto.classList.remove(
+            'input-invalid'
+        );
+
+        tampilkanPreviewFoto(
+            fotoLama.value || null
+        );
+    }
+);
+
 studentForm.addEventListener(
     'submit',
     async function (event) {
@@ -537,9 +720,7 @@ studentForm.addEventListener(
             alamat: inputAlamat.value.trim()
         };
 
-        const valid = validasiForm(dataSiswa);
-
-        if (!valid) {
+        if (!validasiForm(dataSiswa)) {
             tampilkanPesanModal(
                 'Periksa kembali data yang kamu masukkan'
             );
@@ -555,6 +736,21 @@ studentForm.addEventListener(
             method = 'PUT';
         }
 
+        const formData = new FormData();
+
+        formData.append('nis', dataSiswa.nis);
+        formData.append('nama', dataSiswa.nama);
+        formData.append('kelas', dataSiswa.kelas);
+        formData.append('jurusan', dataSiswa.jurusan);
+        formData.append('alamat', dataSiswa.alamat);
+
+        if (inputFoto.files[0]) {
+            formData.append(
+                'foto',
+                inputFoto.files[0]
+            );
+        }
+
         btnSimpan.disabled = true;
 
         btnSimpan.textContent =
@@ -567,12 +763,7 @@ studentForm.addEventListener(
         try {
             const response = await fetch(url, {
                 method: method,
-
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify(dataSiswa)
+                body: formData
             });
 
             const hasil = await response.json();
@@ -628,12 +819,20 @@ async function ambilSiswaBerdasarkanId(id) {
 
         const siswa = hasil.data;
 
+        resetForm();
+
         siswaId.value = siswa.id;
         inputNis.value = siswa.nis;
         inputNama.value = siswa.nama;
         inputKelas.value = siswa.kelas;
         inputJurusan.value = siswa.jurusan;
         inputAlamat.value = siswa.alamat;
+
+        fotoLama.value = siswa.foto_url || '';
+
+        tampilkanPreviewFoto(
+            siswa.foto_url || null
+        );
 
         judulForm.textContent = 'Edit Siswa';
         btnSimpan.textContent = 'Update Data';
@@ -821,6 +1020,7 @@ btnRefresh.addEventListener(
     'click',
     async function () {
         halamanAktif = 1;
+
         await ambilDataSiswa();
 
         tampilkanPesan(

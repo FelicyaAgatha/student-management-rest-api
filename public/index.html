@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Student Management</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
     <div class="app">
-
         <aside class="sidebar">
-
             <div class="brand">
                 <div class="brand-logo">S</div>
 
@@ -64,15 +59,14 @@
                     <small>Administrator</small>
                 </div>
             </div>
-
         </aside>
 
         <main class="content" id="dashboard">
-
             <header class="topbar">
-
                 <div>
-                    <p class="eyebrow">STUDENT MANAGEMENT SYSTEM</p>
+                    <p class="eyebrow">
+                        STUDENT MANAGEMENT SYSTEM
+                    </p>
 
                     <h1>Dashboard Siswa</h1>
 
@@ -89,13 +83,10 @@
                         <small>Administrator</small>
                     </div>
                 </div>
-
             </header>
 
             <section class="stats">
-
                 <article class="stat-card stat-primary">
-
                     <div class="stat-icon">♟</div>
 
                     <div>
@@ -103,11 +94,9 @@
                         <h2 id="totalSiswa">0</h2>
                         <small>Siswa tersimpan</small>
                     </div>
-
                 </article>
 
                 <article class="stat-card">
-
                     <div class="stat-icon icon-green">●</div>
 
                     <div>
@@ -119,33 +108,33 @@
 
                         <small>Express REST API</small>
                     </div>
-
                 </article>
 
                 <article class="stat-card">
-
                     <div class="stat-icon icon-orange">◆</div>
 
                     <div>
                         <p>Database</p>
 
-                        <h2 id="statusDatabase" class="status-text">
+                        <h2
+                            id="statusDatabase"
+                            class="status-text"
+                        >
                             Memeriksa...
                         </h2>
 
                         <small>MySQL db_sekolah</small>
                     </div>
-
                 </article>
-
             </section>
 
             <div id="pesan"></div>
 
-            <section class="card table-card" id="dataSiswa">
-
+            <section
+                class="card table-card"
+                id="dataSiswa"
+            >
                 <div class="table-header">
-
                     <div>
                         <p class="section-label">DATABASE</p>
 
@@ -157,8 +146,10 @@
                     </div>
 
                     <div class="table-actions">
-
-                        <span id="jumlahData" class="count-badge">
+                        <span
+                            id="jumlahData"
+                            class="count-badge"
+                        >
                             0 data
                         </span>
 
@@ -177,15 +168,11 @@
                         >
                             ＋ Tambah Siswa
                         </button>
-
                     </div>
-
                 </div>
 
                 <div class="table-tools">
-
                     <div class="search-box">
-
                         <span>⌕</span>
 
                         <input
@@ -194,44 +181,47 @@
                             placeholder="Cari nama atau NIS..."
                             autocomplete="off"
                         >
-
                     </div>
 
                     <div class="filter-box">
-
                         <label for="filterKelas">
                             Filter kelas
                         </label>
 
                         <select id="filterKelas">
-                            <option value="">Semua kelas</option>
+                            <option value="">
+                                Semua kelas
+                            </option>
                         </select>
-
                     </div>
 
                     <div class="page-size-box">
-
                         <label for="jumlahPerHalaman">
                             Tampilkan
                         </label>
 
                         <select id="jumlahPerHalaman">
-                            <option value="5">5 data</option>
-                            <option value="10">10 data</option>
-                            <option value="20">20 data</option>
+                            <option value="5">
+                                5 data
+                            </option>
+
+                            <option value="10">
+                                10 data
+                            </option>
+
+                            <option value="20">
+                                20 data
+                            </option>
                         </select>
-
                     </div>
-
                 </div>
 
                 <div class="table-wrap">
-
                     <table>
-
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Foto</th>
                                 <th>NIS</th>
                                 <th>Nama</th>
                                 <th>Kelas</th>
@@ -242,27 +232,21 @@
                         </thead>
 
                         <tbody id="tbodySiswa">
-
                             <tr>
-                                <td colspan="7" class="empty">
+                                <td colspan="8" class="empty">
                                     Memuat data...
                                 </td>
                             </tr>
-
                         </tbody>
-
                     </table>
-
                 </div>
 
                 <div class="pagination-wrapper">
-
                     <p id="paginationInfo">
                         Menampilkan 0 data
                     </p>
 
                     <div class="pagination">
-
                         <button
                             type="button"
                             id="btnSebelumnya"
@@ -271,7 +255,10 @@
                             ‹ Sebelumnya
                         </button>
 
-                        <div id="nomorHalaman" class="page-numbers"></div>
+                        <div
+                            id="nomorHalaman"
+                            class="page-numbers"
+                        ></div>
 
                         <button
                             type="button"
@@ -280,33 +267,32 @@
                         >
                             Berikutnya ›
                         </button>
-
                     </div>
-
                 </div>
-
             </section>
 
             <footer>
                 Student Management • Express • MySQL • REST API
             </footer>
-
         </main>
-
     </div>
 
     <div id="modalSiswa" class="modal">
-
-        <div class="modal-overlay" id="modalOverlay"></div>
+        <div
+            class="modal-overlay"
+            id="modalOverlay"
+        ></div>
 
         <div class="modal-content">
-
             <div class="modal-header">
-
                 <div>
-                    <p class="section-label">FORM SISWA</p>
+                    <p class="section-label">
+                        FORM SISWA
+                    </p>
 
-                    <h2 id="judulForm">Tambah Siswa</h2>
+                    <h2 id="judulForm">
+                        Tambah Siswa
+                    </h2>
 
                     <p>
                         Masukkan data siswa dengan lengkap.
@@ -321,22 +307,27 @@
                 >
                     ×
                 </button>
-
             </div>
 
             <div id="pesanModal"></div>
 
-            <form id="studentForm">
+            <form
+                id="studentForm"
+                enctype="multipart/form-data"
+            >
+                <input
+                    type="hidden"
+                    id="siswaId"
+                >
 
-                <input type="hidden" id="siswaId">
+                <input
+                    type="hidden"
+                    id="fotoLama"
+                >
 
                 <div class="form-grid">
-
                     <div class="form-group">
-
-                        <label for="nis">
-                            NIS
-                        </label>
+                        <label for="nis">NIS</label>
 
                         <input
                             type="text"
@@ -346,15 +337,14 @@
                             required
                         >
 
-                        <small class="input-error" id="errorNis"></small>
-
+                        <small
+                            class="input-error"
+                            id="errorNis"
+                        ></small>
                     </div>
 
                     <div class="form-group">
-
-                        <label for="nama">
-                            Nama
-                        </label>
+                        <label for="nama">Nama</label>
 
                         <input
                             type="text"
@@ -364,15 +354,14 @@
                             required
                         >
 
-                        <small class="input-error" id="errorNama"></small>
-
+                        <small
+                            class="input-error"
+                            id="errorNama"
+                        ></small>
                     </div>
 
                     <div class="form-group">
-
-                        <label for="kelas">
-                            Kelas
-                        </label>
+                        <label for="kelas">Kelas</label>
 
                         <input
                             type="text"
@@ -382,12 +371,13 @@
                             required
                         >
 
-                        <small class="input-error" id="errorKelas"></small>
-
+                        <small
+                            class="input-error"
+                            id="errorKelas"
+                        ></small>
                     </div>
 
                     <div class="form-group">
-
                         <label for="jurusan">
                             Jurusan
                         </label>
@@ -400,12 +390,13 @@
                             required
                         >
 
-                        <small class="input-error" id="errorJurusan"></small>
-
+                        <small
+                            class="input-error"
+                            id="errorJurusan"
+                        ></small>
                     </div>
 
                     <div class="form-group form-full">
-
                         <label for="alamat">
                             Alamat
                         </label>
@@ -417,14 +408,64 @@
                             required
                         ></textarea>
 
-                        <small class="input-error" id="errorAlamat"></small>
-
+                        <small
+                            class="input-error"
+                            id="errorAlamat"
+                        ></small>
                     </div>
 
+                    <div class="form-group form-full">
+                        <label for="foto">
+                            Foto Siswa
+                        </label>
+
+                        <div class="upload-foto-wrapper">
+                            <div class="foto-preview-box">
+                                <img
+                                    id="previewFoto"
+                                    class="foto-preview"
+                                    alt="Preview foto siswa"
+                                >
+
+                                <span
+                                    id="previewPlaceholder"
+                                    class="foto-placeholder"
+                                >
+                                    Belum ada foto
+                                </span>
+                            </div>
+
+                            <div class="upload-foto-control">
+                                <input
+                                    type="file"
+                                    id="foto"
+                                    name="foto"
+                                    accept=".jpg,.jpeg,.png,.webp"
+                                >
+
+                                <small>
+                                    Format JPG, PNG, atau WEBP.
+                                    Maksimal 2 MB.
+                                </small>
+
+                                <button
+                                    type="button"
+                                    id="btnHapusPilihanFoto"
+                                    class="btn-secondary"
+                                >
+                                    Hapus Pilihan Foto
+                                </button>
+                            </div>
+                        </div>
+
+                        <small
+                            class="input-error"
+                            id="errorFoto"
+                        ></small>
+                    </div>
                 </div>
 
                 <div class="form-actions">
-
                     <button
                         type="button"
                         id="btnBatal"
@@ -440,28 +481,21 @@
                     >
                         Simpan Data
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
 
-    <div id="loadingOverlay" class="loading-overlay">
-
+    <div
+        id="loadingOverlay"
+        class="loading-overlay"
+    >
         <div class="loading-box">
-
             <div class="spinner"></div>
-
             <p>Memproses data...</p>
-
         </div>
-
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
