@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-logo">S</div>
+
+                <div>
+                    <h2>Student Admin</h2>
+                    <p>REST API</p>
+                </div>
+            </div>
+
+            <p class="menu-title">MENU UTAMA</p>
+
+            <nav>
+                <a href="#dashboard" class="nav-link active">
+                    <span>⌂</span>
+                    Dashboard
+                </a>
+
+                <a href="#formSiswa" class="nav-link">
+                    <span>＋</span>
+                    Tambah Siswa
+                </a>
+
+                <a href="#dataSiswa" class="nav-link">
+                    <span>♙</span>
+                    Data Siswa
+                </a>
+            </nav>
+
+            <div class="profile">
+                <div class="avatar">FA</div>
+
+                <div>
+                    <strong>Felicya Agatha</strong>
+                    <small>Administrator</small>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- KONTEN UTAMA -->
+        <main class="content" id="dashboard">
+
+            <!-- HEADER -->
+            <header class="topbar">
+
+                <div>
+                    <p class="eyebrow">STUDENT MANAGEMENT SYSTEM</p>
+
+                    <h1>Dashboard Siswa</h1>
+
+                    <p class="subtitle">
+                        Kelola data siswa menggunakan REST API.
+                    </p>
+                </div>
+
+                <div class="admin-profile">
+                    <div class="avatar avatar-red">FA</div>
+
+                    <div>
+                        <strong>Felicya Agatha</strong>
+                        <small>Administrator</small>
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- RINGKASAN -->
+            <section class="stats">
+
+                <article class="stat-card stat-primary">
+                    <div class="stat-icon">♟</div>
+
+                    <div>
+                        <p>Total Siswa</p>
+                        <h2 id="totalSiswa">0</h2>
+                        <small>Siswa tersimpan</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon icon-green">●</div>
+
+                    <div>
+                        <p>Status API</p>
+                        <h2 id="statusApi" class="status-text">
+                            Memeriksa...
+                        </h2>
+                        <small>Express REST API</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon icon-orange">◆</div>
+
+                    <div>
+                        <p>Database</p>
+                        <h2 id="statusDatabase" class="status-text">
+                            Memeriksa...
+                        </h2>
+                        <small>MySQL db_sekolah</small>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- FORM SISWA -->
+            <section class="card" id="formSiswa">
+
+                <div class="card-header">
+                    <p class="section-label">FORM SISWA</p>
+
+                    <h2 id="judulForm">Tambah Siswa</h2>
+
+                    <p>
+                        Masukkan data siswa dengan lengkap.
+                    </p>
+                </div>
+
+                <div id="pesan"></div>
+
+                <form id="studentForm">
+
+                    <input type="hidden" id="siswaId">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="nis">NIS</label>
+
+                            <input
+                                type="text"
+                                id="nis"
+                                placeholder="Masukkan NIS"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nama">Nama</label>
+
+                            <input
+                                type="text"
+                                id="nama"
+                                placeholder="Masukkan nama siswa"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="kelas">Kelas</label>
+
+                            <input
+                                type="text"
+                                id="kelas"
+                                placeholder="Contoh: XII RPL 1"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jurusan">Jurusan</label>
+
+                            <input
+                                type="text"
+                                id="jurusan"
+                                placeholder="Masukkan jurusan"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group form-full">
+                            <label for="alamat">Alamat</label>
+
+                            <textarea
+                                id="alamat"
+                                rows="3"
+                                placeholder="Masukkan alamat siswa"
+                                required
+                            ></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            id="btnSimpan"
+                            class="btn-primary"
+                        >
+                            Simpan Data
+                        </button>
+
+                        <button
+                            type="button"
+                            id="btnBatal"
+                            class="btn-secondary"
+                        >
+                            Batal
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <!-- TABEL DATA SISWA -->
+            <section class="card table-card" id="dataSiswa">
+
+                <div class="table-header">
+
+                    <div>
+                        <p class="section-label">DATABASE</p>
+
+                        <h2>Data Siswa</h2>
+
+                        <p>
+                            Daftar siswa yang tersimpan di database.
+                        </p>
+                    </div>
+
+                    <div class="table-actions">
+                        <span id="jumlahData" class="count-badge">
+                            0 data
+                        </span>
+
+                        <button
+                            type="button"
+                            id="btnRefresh"
+                            class="btn-refresh"
+                        >
+                            ↻ Refresh
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>NIS</th>
+                                <th>Nama</th>
+                                <th>Kelas</th>
+                                <th>Jurusan</th>
+                                <th>Alamat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbodySiswa">
+                            <tr>
+                                <td colspan="7" class="empty">
+                                    Memuat data...
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+            <footer>
+                Student Management • Express • MySQL • REST API
+            </footer>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
