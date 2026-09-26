@@ -1,6 +1,6 @@
 # Student Management REST API
 
-Aplikasi manajemen data siswa berbasis REST API untuk mengelola data siswa melalui halaman dashboard. Aplikasi ini dibuat menggunakan Node.js, Express.js, MySQL, HTML, CSS, dan JavaScript.
+Aplikasi manajemen data siswa berbasis REST API untuk mengelola data siswa melalui dashboard web. Aplikasi ini dibuat menggunakan Node.js, Express.js, MySQL, HTML, CSS, dan JavaScript.
 
 ## Live Demo
 
@@ -8,7 +8,7 @@ Aplikasi dapat diakses melalui:
 
 https://student-management-rest-api-production-f875.up.railway.app
 
-## Fitur
+## Fitur Aplikasi
 
 - Menampilkan seluruh data siswa
 - Menampilkan jumlah siswa
@@ -22,7 +22,8 @@ https://student-management-rest-api-production-f875.up.railway.app
 - Pagination atau pembagian halaman
 - Dark mode
 - Tampilan responsif
-- Status koneksi API dan database
+- Status koneksi REST API
+- Status koneksi database
 - REST API CRUD
 - Database MySQL online
 
@@ -46,7 +47,8 @@ https://student-management-rest-api-production-f875.up.railway.app
 ### Tools dan Deployment
 
 - Visual Studio Code
-- Git dan GitHub
+- Git
+- GitHub
 - Postman
 - HeidiSQL
 - Railway
@@ -55,11 +57,11 @@ https://student-management-rest-api-production-f875.up.railway.app
 
 ### Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
 ### Form Tambah Siswa
 
-![Form Tambah Siswa](screenshots/tambah-siswa.png)
+![Form Tambah Siswa](screenshots/Tambah-Siswa.png)
 
 ### Dark Mode
 
@@ -81,10 +83,15 @@ student-management-rest-api/
 │   ├── style.css
 │   └── script.js
 ├── screenshots/
-│   ├── dashboard.png
-│   ├── tambah-siswa.png
+│   ├── Dashboard.png
+│   ├── Tambah-Siswa.png
 │   ├── dark-mode.png
-│   └── pencarian.png
+│   ├── pencarian.png
+│   ├── GetDataUser.png
+│   ├── GetDataUserByID.png
+│   ├── PostDataUser.png
+│   ├── PutDataUser.png
+│   └── DeleteDataUser.png
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
@@ -98,7 +105,7 @@ student-management-rest-api/
 |---|---|---|
 | GET | `/api` | Memeriksa status REST API |
 | GET | `/api/siswa` | Mengambil seluruh data siswa |
-| GET | `/api/siswa/:id` | Mengambil satu siswa berdasarkan ID |
+| GET | `/api/siswa/:id` | Mengambil siswa berdasarkan ID |
 | POST | `/api/siswa` | Menambahkan data siswa |
 | PUT | `/api/siswa/:id` | Mengubah data siswa |
 | DELETE | `/api/siswa/:id` | Menghapus data siswa |
@@ -135,6 +142,89 @@ alamat   : Parungpanjang
 foto     : file gambar
 ```
 
+## Pengujian API
+
+Pengujian REST API dilakukan menggunakan Postman untuk memastikan semua endpoint dapat berjalan dengan baik.
+
+### GET Seluruh Data Siswa
+
+Endpoint ini digunakan untuk mengambil seluruh data siswa.
+
+```http
+GET /api/siswa
+```
+
+![GET Seluruh Data Siswa](screenshots/GetDataUser.png)
+
+### GET Data Siswa Berdasarkan ID
+
+Endpoint ini digunakan untuk mengambil satu data siswa berdasarkan ID.
+
+```http
+GET /api/siswa/:id
+```
+
+![GET Data Siswa Berdasarkan ID](screenshots/GetDataUserByID.png)
+
+### POST Tambah Data Siswa
+
+Endpoint ini digunakan untuk menambahkan data siswa baru.
+
+```http
+POST /api/siswa
+```
+
+![POST Tambah Data Siswa](screenshots/PostDataUser.png)
+
+### PUT Ubah Data Siswa
+
+Endpoint ini digunakan untuk mengubah data siswa berdasarkan ID.
+
+```http
+PUT /api/siswa/:id
+```
+
+![PUT Ubah Data Siswa](screenshots/PutDataUser.png)
+
+### DELETE Data Siswa
+
+Endpoint ini digunakan untuk menghapus data siswa berdasarkan ID.
+
+```http
+DELETE /api/siswa/:id
+```
+
+![DELETE Data Siswa](screenshots/DeleteDataUser.png)
+
+## Contoh Respons API
+
+Contoh respons ketika seluruh data siswa berhasil diambil:
+
+```json
+{
+    "status": true,
+    "message": "Data siswa berhasil diambil",
+    "data": []
+}
+```
+
+Contoh respons ketika data siswa berhasil ditambahkan:
+
+```json
+{
+    "status": true,
+    "message": "Data siswa berhasil ditambahkan",
+    "data": {
+        "id": 1,
+        "nis": "24251059",
+        "nama": "Felicya Agatha",
+        "kelas": "XII RPL",
+        "jurusan": "Rekayasa Perangkat Lunak",
+        "alamat": "Parungpanjang"
+    }
+}
+```
+
 ## Instalasi Project
 
 Clone repository:
@@ -149,7 +239,7 @@ Masuk ke folder project:
 cd student-management-rest-api
 ```
 
-Instal semua dependency:
+Instal seluruh dependency:
 
 ```bash
 npm install
@@ -179,7 +269,9 @@ DB_NAME=db_sekolah
 DB_PORT=3306
 ```
 
-Struktur tabel MySQL:
+## Struktur Tabel MySQL
+
+Jalankan query berikut untuk membuat tabel `siswa`:
 
 ```sql
 CREATE TABLE siswa (
@@ -194,25 +286,16 @@ CREATE TABLE siswa (
 );
 ```
 
-## Pengujian API
+## Cara Menggunakan Aplikasi
 
-REST API dapat diuji menggunakan Postman dengan memilih method dan endpoint yang sesuai.
-
-Contoh:
-
-```http
-GET http://localhost:3000/api/siswa
-```
-
-Contoh respons:
-
-```json
-{
-    "status": true,
-    "message": "Data siswa berhasil diambil",
-    "data": []
-}
-```
+1. Pastikan Node.js dan MySQL telah terpasang.
+2. Buat database dengan nama `db_sekolah`.
+3. Buat tabel `siswa`.
+4. Sesuaikan konfigurasi database.
+5. Jalankan `npm install`.
+6. Jalankan server menggunakan `npm start`.
+7. Buka `http://localhost:3000`.
+8. Gunakan dashboard untuk mengelola data siswa.
 
 ## Deployment
 
@@ -222,6 +305,12 @@ Aplikasi telah di-deploy menggunakan Railway dengan:
 - Database MySQL Railway
 - Environment variables
 - Domain publik Railway
+
+## Repository
+
+Repository project dapat diakses melalui:
+
+https://github.com/FelicyaAgatha/student-management-rest-api
 
 ## Pembuat
 
