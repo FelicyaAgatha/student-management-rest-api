@@ -1,9 +1,8 @@
-// Alamat utama REST API siswa
 const API_URL = '/api/siswa';
 
-// Mengambil elemen HTML
 const studentForm = document.getElementById('studentForm');
 const siswaId = document.getElementById('siswaId');
+
 const inputNis = document.getElementById('nis');
 const inputNama = document.getElementById('nama');
 const inputKelas = document.getElementById('kelas');
@@ -14,6 +13,12 @@ const judulForm = document.getElementById('judulForm');
 const btnSimpan = document.getElementById('btnSimpan');
 const btnBatal = document.getElementById('btnBatal');
 const btnRefresh = document.getElementById('btnRefresh');
+const btnTambah = document.getElementById('btnTambah');
+const btnTambahSidebar = document.getElementById('btnTambahSidebar');
+const btnTutupModal = document.getElementById('btnTutupModal');
+
+const modalSiswa = document.getElementById('modalSiswa');
+const modalOverlay = document.getElementById('modalOverlay');
 
 const tbodySiswa = document.getElementById('tbodySiswa');
 const totalSiswa = document.getElementById('totalSiswa');
@@ -22,22 +27,14 @@ const statusApi = document.getElementById('statusApi');
 const statusDatabase = document.getElementById('statusDatabase');
 const tempatPesan = document.getElementById('pesan');
 
-// ========================================
-// MENCEGAH HTML BERBAHAYA DARI DATABASE
-// ========================================
-
 function escapeHtml(teks) {
-    return String(teks)
+    return String(teks ?? '')
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
 }
-
-// ========================================
-// MENAMPILKAN PESAN
-// ========================================
 
 function tampilkanPesan(message, jenis) {
     const namaClass =
@@ -56,10 +53,6 @@ function tampilkanPesan(message, jenis) {
     }, 3000);
 }
 
-// ========================================
-// MENGATUR STATUS API DAN DATABASE
-// ========================================
-
 function aturStatus(terhubung) {
     if (terhubung) {
         statusApi.textContent = 'Terhubung';
@@ -76,10 +69,30 @@ function aturStatus(terhubung) {
     }
 }
 
-// ========================================
-// MENGAMBIL SEMUA DATA SISWA
-// GET /api/siswa
-// ========================================
+function bukaModal() {
+    modalSiswa.classList.add('active');
+    document.body.classList.add('modal-open');
+
+    setTimeout(function () {
+        inputNis.focus();
+    }, 200);
+}
+
+function tutupModal() {
+    modalSiswa.classList.remove('active');
+    document.body.classList.remove('modal-open');
+
+    resetForm();
+}
+
+function resetForm() {
+    studentForm.reset();
+    siswaId.value = '';
+
+    judulForm.textContent = 'Tambah Siswa';
+    btnSimpan.textContent = 'Simpan Data';
+    btnSimpan.disabled = false;
+}
 
 async function ambilDataSiswa() {
     tbodySiswa.innerHTML = `
@@ -130,10 +143,6 @@ async function ambilDataSiswa() {
         btnRefresh.textContent = '↻ Refresh';
     }
 }
-
-// ========================================
-// MENAMPILKAN DATA KE TABEL
-// ========================================
 
 function tampilkanTabel(daftarSiswa) {
     tbodySiswa.innerHTML = '';
@@ -194,24 +203,6 @@ function tampilkanTabel(daftarSiswa) {
     });
 }
 
-// ========================================
-// RESET FORM
-// ========================================
-
-function resetForm() {
-    studentForm.reset();
-    siswaId.value = '';
-
-    judulForm.textContent = 'Tambah Siswa';
-    btnSimpan.textContent = 'Simpan Data';
-    btnSimpan.disabled = false;
-    btnBatal.style.display = 'none';
-}
-
-// ========================================
-// VALIDASI FORM
-// ========================================
-
 function validasiForm(dataSiswa) {
     if (
         !dataSiswa.nis ||
@@ -225,10 +216,6 @@ function validasiForm(dataSiswa) {
 
     return null;
 }
-
-// ========================================
-// POST DAN PUT DATA SISWA
-// ========================================
 
 studentForm.addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -246,20 +233,20 @@ studentForm.addEventListener('submit', async function (event) {
     const kesalahan = validasiForm(dataSiswa);
 
     if (kesalahan) {
-        tampilkanPesan(kesalahan, 'gagal');
+        alert(kesalahan);
         return;
     }
 
     let url = API_URL;
     let method = 'POST';
 
-    // Jika ID tersedia, berarti sedang melakukan edit
     if (id !== '') {
         url = `${API_URL}/${id}`;
         method = 'PUT';
     }
 
     btnSimpan.disabled = true;
+
     btnSimpan.textContent =
         method === 'POST'
             ? 'Menyimpan...'
@@ -284,48 +271,23 @@ studentForm.addEventListener('submit', async function (event) {
             );
         }
 
+        tutupModal();
         tampilkanPesan(hasil.message, 'sukses');
 
-        resetForm();
         await ambilDataSiswa();
     } catch (error) {
         console.error(error);
 
-        tampilkanPesan(error.message, 'gagal');
+        alert(error.message);
 
         btnSimpan.disabled = false;
+
         btnSimpan.textContent =
             id === ''
                 ? 'Simpan Data'
                 : 'Update Data';
     }
 });
-
-// ========================================
-// TOMBOL EDIT DAN HAPUS
-// ========================================
-
-tbodySiswa.addEventListener('click', async function (event) {
-    const tombolEdit = event.target.closest('.btn-edit');
-    const tombolHapus = event.target.closest('.btn-hapus');
-
-    if (tombolEdit) {
-        const id = tombolEdit.dataset.id;
-        await ambilSiswaBerdasarkanId(id);
-    }
-
-    if (tombolHapus) {
-        const id = tombolHapus.dataset.id;
-        const nama = tombolHapus.dataset.nama;
-
-        await hapusSiswa(id, nama);
-    }
-});
-
-// ========================================
-// GET SISWA BERDASARKAN ID UNTUK EDIT
-// GET /api/siswa/:id
-// ========================================
 
 async function ambilSiswaBerdasarkanId(id) {
     try {
@@ -349,25 +311,13 @@ async function ambilSiswaBerdasarkanId(id) {
 
         judulForm.textContent = 'Edit Siswa';
         btnSimpan.textContent = 'Update Data';
-        btnBatal.style.display = 'inline-block';
 
-        document
-            .getElementById('formSiswa')
-            .scrollIntoView({
-                behavior: 'smooth'
-            });
-
-        inputNis.focus();
+        bukaModal();
     } catch (error) {
         console.error(error);
         tampilkanPesan(error.message, 'gagal');
     }
 }
-
-// ========================================
-// DELETE DATA SISWA
-// DELETE /api/siswa/:id
-// ========================================
 
 async function hapusSiswa(id, nama) {
     const yakin = confirm(
@@ -392,11 +342,6 @@ async function hapusSiswa(id, nama) {
         }
 
         tampilkanPesan(hasil.message, 'sukses');
-
-        if (siswaId.value === String(id)) {
-            resetForm();
-        }
-
         await ambilDataSiswa();
     } catch (error) {
         console.error(error);
@@ -404,25 +349,57 @@ async function hapusSiswa(id, nama) {
     }
 }
 
-// ========================================
-// TOMBOL BATAL
-// ========================================
+tbodySiswa.addEventListener('click', async function (event) {
+    const tombolEdit = event.target.closest('.btn-edit');
+    const tombolHapus = event.target.closest('.btn-hapus');
 
-btnBatal.addEventListener('click', function () {
-    resetForm();
+    if (tombolEdit) {
+        const id = tombolEdit.dataset.id;
+        await ambilSiswaBerdasarkanId(id);
+    }
+
+    if (tombolHapus) {
+        const id = tombolHapus.dataset.id;
+        const nama = tombolHapus.dataset.nama;
+
+        await hapusSiswa(id, nama);
+    }
 });
 
-// ========================================
-// TOMBOL REFRESH
-// ========================================
+btnTambah.addEventListener('click', function () {
+    resetForm();
+    bukaModal();
+});
+
+btnTambahSidebar.addEventListener('click', function () {
+    resetForm();
+    bukaModal();
+});
+
+btnTutupModal.addEventListener('click', function () {
+    tutupModal();
+});
+
+btnBatal.addEventListener('click', function () {
+    tutupModal();
+});
+
+modalOverlay.addEventListener('click', function () {
+    tutupModal();
+});
 
 btnRefresh.addEventListener('click', function () {
     ambilDataSiswa();
 });
 
-// ========================================
-// MENU SIDEBAR AKTIF
-// ========================================
+document.addEventListener('keydown', function (event) {
+    if (
+        event.key === 'Escape' &&
+        modalSiswa.classList.contains('active')
+    ) {
+        tutupModal();
+    }
+});
 
 const semuaMenu = document.querySelectorAll('.nav-link');
 
@@ -435,9 +412,5 @@ semuaMenu.forEach(function (menu) {
         menu.classList.add('active');
     });
 });
-
-// ========================================
-// DIJALANKAN SAAT HALAMAN DIBUKA
-// ========================================
 
 ambilDataSiswa();

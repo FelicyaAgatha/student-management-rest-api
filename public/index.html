@@ -33,15 +33,19 @@
                     Dashboard
                 </a>
 
-                <a href="#formSiswa" class="nav-link">
-                    <span>＋</span>
-                    Tambah Siswa
-                </a>
-
                 <a href="#dataSiswa" class="nav-link">
                     <span>♙</span>
                     Data Siswa
                 </a>
+
+                <button
+                    type="button"
+                    id="btnTambahSidebar"
+                    class="nav-link nav-button"
+                >
+                    <span>＋</span>
+                    Tambah Siswa
+                </button>
             </nav>
 
             <div class="profile">
@@ -82,7 +86,7 @@
 
             </header>
 
-            <!-- RINGKASAN -->
+            <!-- KARTU RINGKASAN -->
             <section class="stats">
 
                 <article class="stat-card stat-primary">
@@ -100,9 +104,11 @@
 
                     <div>
                         <p>Status API</p>
+
                         <h2 id="statusApi" class="status-text">
                             Memeriksa...
                         </h2>
+
                         <small>Express REST API</small>
                     </div>
                 </article>
@@ -112,118 +118,21 @@
 
                     <div>
                         <p>Database</p>
+
                         <h2 id="statusDatabase" class="status-text">
                             Memeriksa...
                         </h2>
+
                         <small>MySQL db_sekolah</small>
                     </div>
                 </article>
 
             </section>
 
-            <!-- FORM SISWA -->
-            <section class="card" id="formSiswa">
+            <!-- PESAN -->
+            <div id="pesan"></div>
 
-                <div class="card-header">
-                    <p class="section-label">FORM SISWA</p>
-
-                    <h2 id="judulForm">Tambah Siswa</h2>
-
-                    <p>
-                        Masukkan data siswa dengan lengkap.
-                    </p>
-                </div>
-
-                <div id="pesan"></div>
-
-                <form id="studentForm">
-
-                    <input type="hidden" id="siswaId">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-                            <label for="nis">NIS</label>
-
-                            <input
-                                type="text"
-                                id="nis"
-                                placeholder="Masukkan NIS"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="nama">Nama</label>
-
-                            <input
-                                type="text"
-                                id="nama"
-                                placeholder="Masukkan nama siswa"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="kelas">Kelas</label>
-
-                            <input
-                                type="text"
-                                id="kelas"
-                                placeholder="Contoh: XII RPL 1"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="jurusan">Jurusan</label>
-
-                            <input
-                                type="text"
-                                id="jurusan"
-                                placeholder="Masukkan jurusan"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group form-full">
-                            <label for="alamat">Alamat</label>
-
-                            <textarea
-                                id="alamat"
-                                rows="3"
-                                placeholder="Masukkan alamat siswa"
-                                required
-                            ></textarea>
-                        </div>
-
-                    </div>
-
-                    <div class="form-actions">
-
-                        <button
-                            type="submit"
-                            id="btnSimpan"
-                            class="btn-primary"
-                        >
-                            Simpan Data
-                        </button>
-
-                        <button
-                            type="button"
-                            id="btnBatal"
-                            class="btn-secondary"
-                        >
-                            Batal
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </section>
-
-            <!-- TABEL DATA SISWA -->
+            <!-- DATA SISWA -->
             <section class="card table-card" id="dataSiswa">
 
                 <div class="table-header">
@@ -239,6 +148,7 @@
                     </div>
 
                     <div class="table-actions">
+
                         <span id="jumlahData" class="count-badge">
                             0 data
                         </span>
@@ -250,6 +160,15 @@
                         >
                             ↻ Refresh
                         </button>
+
+                        <button
+                            type="button"
+                            id="btnTambah"
+                            class="btn-primary"
+                        >
+                            ＋ Tambah Siswa
+                        </button>
+
                     </div>
 
                 </div>
@@ -271,11 +190,13 @@
                         </thead>
 
                         <tbody id="tbodySiswa">
+
                             <tr>
                                 <td colspan="7" class="empty">
                                     Memuat data...
                                 </td>
                             </tr>
+
                         </tbody>
 
                     </table>
@@ -289,6 +210,123 @@
             </footer>
 
         </main>
+
+    </div>
+
+    <!-- MODAL FORM SISWA -->
+    <div id="modalSiswa" class="modal">
+
+        <div class="modal-overlay" id="modalOverlay"></div>
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <p class="section-label">FORM SISWA</p>
+
+                    <h2 id="judulForm">Tambah Siswa</h2>
+
+                    <p>Masukkan data siswa dengan lengkap.</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="btnTutupModal"
+                    class="btn-close"
+                    aria-label="Tutup form"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="studentForm">
+
+                <input type="hidden" id="siswaId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="nis">NIS</label>
+
+                        <input
+                            type="text"
+                            id="nis"
+                            placeholder="Masukkan NIS"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+
+                        <input
+                            type="text"
+                            id="nama"
+                            placeholder="Masukkan nama siswa"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kelas">Kelas</label>
+
+                        <input
+                            type="text"
+                            id="kelas"
+                            placeholder="Contoh: XII RPL 1"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jurusan">Jurusan</label>
+
+                        <input
+                            type="text"
+                            id="jurusan"
+                            placeholder="Masukkan jurusan"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group form-full">
+                        <label for="alamat">Alamat</label>
+
+                        <textarea
+                            id="alamat"
+                            rows="3"
+                            placeholder="Masukkan alamat siswa"
+                            required
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="btnBatal"
+                        class="btn-secondary"
+                    >
+                        Batal
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="btnSimpan"
+                        class="btn-primary"
+                    >
+                        Simpan Data
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 

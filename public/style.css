@@ -657,3 +657,194 @@ footer {
         flex-direction: column;
     }
 }
+/* ========================================
+   TOMBOL SIDEBAR
+======================================== */
+
+.nav-button {
+    width: 100%;
+
+    border: none;
+    background: transparent;
+
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+/* ========================================
+   MODAL FORM SISWA
+======================================== */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 0.25s ease;
+    z-index: 100;
+}
+
+.modal.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+
+    padding: 28px;
+
+    border: 1px solid #eceef4;
+    border-radius: 20px;
+
+    background: white;
+
+    overflow-y: auto;
+
+    box-shadow: 0 25px 70px rgba(15, 23, 42, 0.24);
+
+    transform: translateY(25px) scale(0.97);
+    transition: transform 0.25s ease;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.modal-header h2 {
+    margin-bottom: 7px;
+    font-size: 23px;
+}
+
+.modal-header p:last-child {
+    color: #778198;
+    font-size: 13px;
+}
+
+.btn-close {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #fff1f2;
+    color: #b91c1c;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-close:hover {
+    background: #fee2e2;
+    transform: rotate(5deg);
+}
+
+/* Tombol batal ditampilkan di dalam modal */
+.modal .btn-secondary {
+    display: inline-block;
+}
+
+/* Tombol form diletakkan di kanan */
+.modal .form-actions {
+    justify-content: flex-end;
+}
+
+/* Mencegah halaman bergerak saat modal terbuka */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* ========================================
+   PENYESUAIAN TABEL
+======================================== */
+
+.table-actions .btn-primary {
+    padding: 10px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.table-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   RESPONSIVE MODAL
+======================================== */
+
+@media (max-width: 700px) {
+    .modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-content {
+        max-width: none;
+        max-height: 92vh;
+
+        padding: 22px 18px;
+
+        border-radius: 22px 22px 0 0;
+
+        transform: translateY(100%);
+    }
+
+    .modal.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .table-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .table-actions .btn-primary {
+        flex: 1;
+    }
+}
