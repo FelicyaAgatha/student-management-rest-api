@@ -9,6 +9,12 @@ const inputKelas = document.getElementById('kelas');
 const inputJurusan = document.getElementById('jurusan');
 const inputAlamat = document.getElementById('alamat');
 
+const errorNis = document.getElementById('errorNis');
+const errorNama = document.getElementById('errorNama');
+const errorKelas = document.getElementById('errorKelas');
+const errorJurusan = document.getElementById('errorJurusan');
+const errorAlamat = document.getElementById('errorAlamat');
+
 const judulForm = document.getElementById('judulForm');
 const btnSimpan = document.getElementById('btnSimpan');
 const btnBatal = document.getElementById('btnBatal');
@@ -16,9 +22,14 @@ const btnRefresh = document.getElementById('btnRefresh');
 const btnTambah = document.getElementById('btnTambah');
 const btnTambahSidebar = document.getElementById('btnTambahSidebar');
 const btnTutupModal = document.getElementById('btnTutupModal');
+const btnDarkMode = document.getElementById('btnDarkMode');
+
+const darkModeIcon = document.getElementById('darkModeIcon');
+const darkModeText = document.getElementById('darkModeText');
 
 const modalSiswa = document.getElementById('modalSiswa');
 const modalOverlay = document.getElementById('modalOverlay');
+const loadingOverlay = document.getElementById('loadingOverlay');
 
 const tbodySiswa = document.getElementById('tbodySiswa');
 const totalSiswa = document.getElementById('totalSiswa');
@@ -26,6 +37,21 @@ const jumlahData = document.getElementById('jumlahData');
 const statusApi = document.getElementById('statusApi');
 const statusDatabase = document.getElementById('statusDatabase');
 const tempatPesan = document.getElementById('pesan');
+const pesanModal = document.getElementById('pesanModal');
+
+const inputPencarian = document.getElementById('inputPencarian');
+const filterKelas = document.getElementById('filterKelas');
+const jumlahPerHalaman = document.getElementById('jumlahPerHalaman');
+
+const btnSebelumnya = document.getElementById('btnSebelumnya');
+const btnBerikutnya = document.getElementById('btnBerikutnya');
+const nomorHalaman = document.getElementById('nomorHalaman');
+const paginationInfo = document.getElementById('paginationInfo');
+
+let semuaSiswa = [];
+let siswaTersaring = [];
+let halamanAktif = 1;
+let dataPerHalaman = 5;
 
 function escapeHtml(teks) {
     return String(teks ?? '')
@@ -50,7 +76,27 @@ function tampilkanPesan(message, jenis) {
 
     setTimeout(function () {
         tempatPesan.innerHTML = '';
-    }, 3000);
+    }, 3500);
+}
+
+function tampilkanPesanModal(message) {
+    pesanModal.innerHTML = `
+        <div class="message-error">
+            ${escapeHtml(message)}
+        </div>
+    `;
+}
+
+function hapusPesanModal() {
+    pesanModal.innerHTML = '';
+}
+
+function tampilkanLoading() {
+    loadingOverlay.classList.add('active');
+}
+
+function sembunyikanLoading() {
+    loadingOverlay.classList.remove('active');
 }
 
 function aturStatus(terhubung) {
@@ -70,6 +116,7 @@ function aturStatus(terhubung) {
 }
 
 function bukaModal() {
+    hapusPesanModal();
     modalSiswa.classList.add('active');
     document.body.classList.add('modal-open');
 
@@ -92,13 +139,120 @@ function resetForm() {
     judulForm.textContent = 'Tambah Siswa';
     btnSimpan.textContent = 'Simpan Data';
     btnSimpan.disabled = false;
+
+    hapusSemuaError();
+    hapusPesanModal();
+}
+
+function hapusSemuaError() {
+    errorNis.textContent = '';
+    errorNama.textContent = '';
+    errorKelas.textContent = '';
+    errorJurusan.textContent = '';
+    errorAlamat.textContent = '';
+
+    inputNis.classList.remove('input-invalid');
+    inputNama.classList.remove('input-invalid');
+    inputKelas.classList.remove('input-invalid');
+    inputJurusan.classList.remove('input-invalid');
+    inputAlamat.classList.remove('input-invalid');
+}
+
+function beriError(input, tempatError, message) {
+    input.classList.add('input-invalid');
+    tempatError.textContent = message;
+}
+
+function validasiForm(dataSiswa) {
+    hapusSemuaError();
+
+    let valid = true;
+
+    if (dataSiswa.nis === '') {
+        beriError(
+            inputNis,
+            errorNis,
+            'NIS wajib diisi'
+        );
+
+        valid = false;
+    } else if (dataSiswa.nis.length < 4) {
+        beriError(
+            inputNis,
+            errorNis,
+            'NIS minimal 4 karakter'
+        );
+
+        valid = false;
+    }
+
+    if (dataSiswa.nama === '') {
+        beriError(
+            inputNama,
+            errorNama,
+            'Nama wajib diisi'
+        );
+
+        valid = false;
+    } else if (dataSiswa.nama.length < 3) {
+        beriError(
+            inputNama,
+            errorNama,
+            'Nama minimal 3 karakter'
+        );
+
+        valid = false;
+    }
+
+    if (dataSiswa.kelas === '') {
+        beriError(
+            inputKelas,
+            errorKelas,
+            'Kelas wajib diisi'
+        );
+
+        valid = false;
+    }
+
+    if (dataSiswa.jurusan === '') {
+        beriError(
+            inputJurusan,
+            errorJurusan,
+            'Jurusan wajib diisi'
+        );
+
+        valid = false;
+    }
+
+    if (dataSiswa.alamat === '') {
+        beriError(
+            inputAlamat,
+            errorAlamat,
+            'Alamat wajib diisi'
+        );
+
+        valid = false;
+    } else if (dataSiswa.alamat.length < 3) {
+        beriError(
+            inputAlamat,
+            errorAlamat,
+            'Alamat minimal 3 karakter'
+        );
+
+        valid = false;
+    }
+
+    return valid;
 }
 
 async function ambilDataSiswa() {
     tbodySiswa.innerHTML = `
         <tr>
             <td colspan="7" class="empty">
-                Memuat data...
+                <div class="table-loading">
+                    <div class="spinner-small"></div>
+                    <span>Memuat data...</span>
+                </div>
             </td>
         </tr>
     `;
@@ -116,15 +270,18 @@ async function ambilDataSiswa() {
             );
         }
 
-        const daftarSiswa = hasil.data || [];
+        semuaSiswa = hasil.data || [];
 
-        totalSiswa.textContent = daftarSiswa.length;
-        jumlahData.textContent = `${daftarSiswa.length} data`;
+        totalSiswa.textContent = semuaSiswa.length;
 
         aturStatus(true);
-        tampilkanTabel(daftarSiswa);
+        isiPilihanKelas();
+        terapkanFilter();
     } catch (error) {
         console.error(error);
+
+        semuaSiswa = [];
+        siswaTersaring = [];
 
         totalSiswa.textContent = '0';
         jumlahData.textContent = '0 data';
@@ -138,20 +295,96 @@ async function ambilDataSiswa() {
                 </td>
             </tr>
         `;
+
+        tampilkanPagination();
     } finally {
         btnRefresh.disabled = false;
         btnRefresh.textContent = '↻ Refresh';
     }
 }
 
-function tampilkanTabel(daftarSiswa) {
+function isiPilihanKelas() {
+    const kelasSebelumnya = filterKelas.value;
+
+    const daftarKelas = [
+        ...new Set(
+            semuaSiswa
+                .map(function (siswa) {
+                    return siswa.kelas;
+                })
+                .filter(function (kelas) {
+                    return kelas;
+                })
+        )
+    ].sort();
+
+    filterKelas.innerHTML = `
+        <option value="">Semua kelas</option>
+    `;
+
+    daftarKelas.forEach(function (kelas) {
+        const option = document.createElement('option');
+
+        option.value = kelas;
+        option.textContent = kelas;
+
+        filterKelas.appendChild(option);
+    });
+
+    if (daftarKelas.includes(kelasSebelumnya)) {
+        filterKelas.value = kelasSebelumnya;
+    }
+}
+
+function terapkanFilter() {
+    const kataKunci = inputPencarian
+        .value
+        .trim()
+        .toLowerCase();
+
+    const kelasDipilih = filterKelas.value;
+
+    siswaTersaring = semuaSiswa.filter(function (siswa) {
+        const nama = String(siswa.nama ?? '').toLowerCase();
+        const nis = String(siswa.nis ?? '').toLowerCase();
+        const kelas = String(siswa.kelas ?? '');
+
+        const cocokPencarian =
+            nama.includes(kataKunci) ||
+            nis.includes(kataKunci);
+
+        const cocokKelas =
+            kelasDipilih === '' ||
+            kelas === kelasDipilih;
+
+        return cocokPencarian && cocokKelas;
+    });
+
+    jumlahData.textContent = `${siswaTersaring.length} data`;
+
+    const totalHalaman = Math.max(
+        1,
+        Math.ceil(
+            siswaTersaring.length / dataPerHalaman
+        )
+    );
+
+    if (halamanAktif > totalHalaman) {
+        halamanAktif = totalHalaman;
+    }
+
+    tampilkanTabel();
+    tampilkanPagination();
+}
+
+function tampilkanTabel() {
     tbodySiswa.innerHTML = '';
 
-    if (daftarSiswa.length === 0) {
+    if (siswaTersaring.length === 0) {
         tbodySiswa.innerHTML = `
             <tr>
                 <td colspan="7" class="empty">
-                    Belum ada data siswa.
+                    Data siswa tidak ditemukan.
                 </td>
             </tr>
         `;
@@ -159,13 +392,29 @@ function tampilkanTabel(daftarSiswa) {
         return;
     }
 
-    daftarSiswa.forEach(function (siswa, index) {
+    const indeksAwal =
+        (halamanAktif - 1) * dataPerHalaman;
+
+    const indeksAkhir =
+        indeksAwal + dataPerHalaman;
+
+    const dataHalaman = siswaTersaring.slice(
+        indeksAwal,
+        indeksAkhir
+    );
+
+    dataHalaman.forEach(function (siswa, index) {
+        const nomor = indeksAwal + index + 1;
         const baris = document.createElement('tr');
 
         baris.innerHTML = `
-            <td>${index + 1}</td>
+            <td>${nomor}</td>
 
-            <td>${escapeHtml(siswa.nis)}</td>
+            <td>
+                <span class="nis-badge">
+                    ${escapeHtml(siswa.nis)}
+                </span>
+            </td>
 
             <td>
                 <span class="student-name">
@@ -180,22 +429,24 @@ function tampilkanTabel(daftarSiswa) {
             <td>${escapeHtml(siswa.alamat)}</td>
 
             <td>
-                <button
-                    type="button"
-                    class="btn-edit"
-                    data-id="${siswa.id}"
-                >
-                    Edit
-                </button>
+                <div class="action-buttons">
+                    <button
+                        type="button"
+                        class="btn-edit"
+                        data-id="${siswa.id}"
+                    >
+                        Edit
+                    </button>
 
-                <button
-                    type="button"
-                    class="btn-hapus"
-                    data-id="${siswa.id}"
-                    data-nama="${escapeHtml(siswa.nama)}"
-                >
-                    Hapus
-                </button>
+                    <button
+                        type="button"
+                        class="btn-hapus"
+                        data-id="${siswa.id}"
+                        data-nama="${escapeHtml(siswa.nama)}"
+                    >
+                        Hapus
+                    </button>
+                </div>
             </td>
         `;
 
@@ -203,100 +454,175 @@ function tampilkanTabel(daftarSiswa) {
     });
 }
 
-function validasiForm(dataSiswa) {
-    if (
-        !dataSiswa.nis ||
-        !dataSiswa.nama ||
-        !dataSiswa.kelas ||
-        !dataSiswa.jurusan ||
-        !dataSiswa.alamat
+function tampilkanPagination() {
+    const totalData = siswaTersaring.length;
+
+    const totalHalaman = Math.max(
+        1,
+        Math.ceil(totalData / dataPerHalaman)
+    );
+
+    const indeksAwal =
+        totalData === 0
+            ? 0
+            : (halamanAktif - 1) * dataPerHalaman + 1;
+
+    const indeksAkhir = Math.min(
+        halamanAktif * dataPerHalaman,
+        totalData
+    );
+
+    paginationInfo.textContent =
+        totalData === 0
+            ? 'Menampilkan 0 data'
+            : `Menampilkan ${indeksAwal}-${indeksAkhir} dari ${totalData} data`;
+
+    btnSebelumnya.disabled =
+        halamanAktif <= 1 ||
+        totalData === 0;
+
+    btnBerikutnya.disabled =
+        halamanAktif >= totalHalaman ||
+        totalData === 0;
+
+    nomorHalaman.innerHTML = '';
+
+    for (
+        let nomor = 1;
+        nomor <= totalHalaman;
+        nomor++
     ) {
-        return 'Semua data wajib diisi';
-    }
+        const tombolNomor = document.createElement('button');
 
-    return null;
-}
+        tombolNomor.type = 'button';
+        tombolNomor.textContent = nomor;
+        tombolNomor.className = 'page-number';
 
-studentForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    const id = siswaId.value;
-
-    const dataSiswa = {
-        nis: inputNis.value.trim(),
-        nama: inputNama.value.trim(),
-        kelas: inputKelas.value.trim(),
-        jurusan: inputJurusan.value.trim(),
-        alamat: inputAlamat.value.trim()
-    };
-
-    const kesalahan = validasiForm(dataSiswa);
-
-    if (kesalahan) {
-        alert(kesalahan);
-        return;
-    }
-
-    let url = API_URL;
-    let method = 'POST';
-
-    if (id !== '') {
-        url = `${API_URL}/${id}`;
-        method = 'PUT';
-    }
-
-    btnSimpan.disabled = true;
-
-    btnSimpan.textContent =
-        method === 'POST'
-            ? 'Menyimpan...'
-            : 'Mengubah...';
-
-    try {
-        const response = await fetch(url, {
-            method: method,
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify(dataSiswa)
-        });
-
-        const hasil = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                hasil.message || 'Data siswa gagal disimpan'
-            );
+        if (nomor === halamanAktif) {
+            tombolNomor.classList.add('active');
         }
 
-        tutupModal();
-        tampilkanPesan(hasil.message, 'sukses');
+        tombolNomor.addEventListener(
+            'click',
+            function () {
+                halamanAktif = nomor;
 
-        await ambilDataSiswa();
-    } catch (error) {
-        console.error(error);
+                tampilkanTabel();
+                tampilkanPagination();
 
-        alert(error.message);
+                document
+                    .getElementById('dataSiswa')
+                    .scrollIntoView({
+                        behavior: 'smooth'
+                    });
+            }
+        );
 
-        btnSimpan.disabled = false;
+        nomorHalaman.appendChild(tombolNomor);
+    }
+}
+
+studentForm.addEventListener(
+    'submit',
+    async function (event) {
+        event.preventDefault();
+
+        const id = siswaId.value;
+
+        const dataSiswa = {
+            nis: inputNis.value.trim(),
+            nama: inputNama.value.trim(),
+            kelas: inputKelas.value.trim(),
+            jurusan: inputJurusan.value.trim(),
+            alamat: inputAlamat.value.trim()
+        };
+
+        const valid = validasiForm(dataSiswa);
+
+        if (!valid) {
+            tampilkanPesanModal(
+                'Periksa kembali data yang kamu masukkan'
+            );
+
+            return;
+        }
+
+        let url = API_URL;
+        let method = 'POST';
+
+        if (id !== '') {
+            url = `${API_URL}/${id}`;
+            method = 'PUT';
+        }
+
+        btnSimpan.disabled = true;
 
         btnSimpan.textContent =
-            id === ''
-                ? 'Simpan Data'
-                : 'Update Data';
+            method === 'POST'
+                ? 'Menyimpan...'
+                : 'Mengubah...';
+
+        tampilkanLoading();
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(dataSiswa)
+            });
+
+            const hasil = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    hasil.message ||
+                    'Data siswa gagal disimpan'
+                );
+            }
+
+            tutupModal();
+
+            tampilkanPesan(
+                hasil.message,
+                'sukses'
+            );
+
+            await ambilDataSiswa();
+        } catch (error) {
+            console.error(error);
+
+            tampilkanPesanModal(error.message);
+
+            btnSimpan.disabled = false;
+
+            btnSimpan.textContent =
+                id === ''
+                    ? 'Simpan Data'
+                    : 'Update Data';
+        } finally {
+            sembunyikanLoading();
+        }
     }
-});
+);
 
 async function ambilSiswaBerdasarkanId(id) {
+    tampilkanLoading();
+
     try {
-        const response = await fetch(`${API_URL}/${id}`);
+        const response = await fetch(
+            `${API_URL}/${id}`
+        );
+
         const hasil = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                hasil.message || 'Data siswa tidak ditemukan'
+                hasil.message ||
+                'Data siswa tidak ditemukan'
             );
         }
 
@@ -315,7 +641,13 @@ async function ambilSiswaBerdasarkanId(id) {
         bukaModal();
     } catch (error) {
         console.error(error);
-        tampilkanPesan(error.message, 'gagal');
+
+        tampilkanPesan(
+            error.message,
+            'gagal'
+        );
+    } finally {
+        sembunyikanLoading();
     }
 }
 
@@ -328,89 +660,253 @@ async function hapusSiswa(id, nama) {
         return;
     }
 
+    tampilkanLoading();
+
     try {
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE'
-        });
+        const response = await fetch(
+            `${API_URL}/${id}`,
+            {
+                method: 'DELETE'
+            }
+        );
 
         const hasil = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                hasil.message || 'Data siswa gagal dihapus'
+                hasil.message ||
+                'Data siswa gagal dihapus'
             );
         }
 
-        tampilkanPesan(hasil.message, 'sukses');
+        tampilkanPesan(
+            hasil.message,
+            'sukses'
+        );
+
         await ambilDataSiswa();
     } catch (error) {
         console.error(error);
-        tampilkanPesan(error.message, 'gagal');
+
+        tampilkanPesan(
+            error.message,
+            'gagal'
+        );
+    } finally {
+        sembunyikanLoading();
     }
 }
 
-tbodySiswa.addEventListener('click', async function (event) {
-    const tombolEdit = event.target.closest('.btn-edit');
-    const tombolHapus = event.target.closest('.btn-hapus');
+tbodySiswa.addEventListener(
+    'click',
+    async function (event) {
+        const tombolEdit =
+            event.target.closest('.btn-edit');
 
-    if (tombolEdit) {
-        const id = tombolEdit.dataset.id;
-        await ambilSiswaBerdasarkanId(id);
+        const tombolHapus =
+            event.target.closest('.btn-hapus');
+
+        if (tombolEdit) {
+            await ambilSiswaBerdasarkanId(
+                tombolEdit.dataset.id
+            );
+        }
+
+        if (tombolHapus) {
+            await hapusSiswa(
+                tombolHapus.dataset.id,
+                tombolHapus.dataset.nama
+            );
+        }
     }
+);
 
-    if (tombolHapus) {
-        const id = tombolHapus.dataset.id;
-        const nama = tombolHapus.dataset.nama;
-
-        await hapusSiswa(id, nama);
+inputPencarian.addEventListener(
+    'input',
+    function () {
+        halamanAktif = 1;
+        terapkanFilter();
     }
-});
+);
 
-btnTambah.addEventListener('click', function () {
-    resetForm();
-    bukaModal();
-});
+filterKelas.addEventListener(
+    'change',
+    function () {
+        halamanAktif = 1;
+        terapkanFilter();
+    }
+);
 
-btnTambahSidebar.addEventListener('click', function () {
-    resetForm();
-    bukaModal();
-});
+jumlahPerHalaman.addEventListener(
+    'change',
+    function () {
+        dataPerHalaman = Number(
+            jumlahPerHalaman.value
+        );
 
-btnTutupModal.addEventListener('click', function () {
-    tutupModal();
-});
+        halamanAktif = 1;
 
-btnBatal.addEventListener('click', function () {
-    tutupModal();
-});
+        tampilkanTabel();
+        tampilkanPagination();
+    }
+);
 
-modalOverlay.addEventListener('click', function () {
-    tutupModal();
-});
+btnSebelumnya.addEventListener(
+    'click',
+    function () {
+        if (halamanAktif > 1) {
+            halamanAktif--;
 
-btnRefresh.addEventListener('click', function () {
-    ambilDataSiswa();
-});
+            tampilkanTabel();
+            tampilkanPagination();
+        }
+    }
+);
 
-document.addEventListener('keydown', function (event) {
-    if (
-        event.key === 'Escape' &&
-        modalSiswa.classList.contains('active')
-    ) {
+btnBerikutnya.addEventListener(
+    'click',
+    function () {
+        const totalHalaman = Math.ceil(
+            siswaTersaring.length /
+            dataPerHalaman
+        );
+
+        if (halamanAktif < totalHalaman) {
+            halamanAktif++;
+
+            tampilkanTabel();
+            tampilkanPagination();
+        }
+    }
+);
+
+btnTambah.addEventListener(
+    'click',
+    function () {
+        resetForm();
+        bukaModal();
+    }
+);
+
+btnTambahSidebar.addEventListener(
+    'click',
+    function () {
+        resetForm();
+        bukaModal();
+    }
+);
+
+btnTutupModal.addEventListener(
+    'click',
+    function () {
         tutupModal();
     }
-});
+);
 
-const semuaMenu = document.querySelectorAll('.nav-link');
+btnBatal.addEventListener(
+    'click',
+    function () {
+        tutupModal();
+    }
+);
+
+modalOverlay.addEventListener(
+    'click',
+    function () {
+        tutupModal();
+    }
+);
+
+btnRefresh.addEventListener(
+    'click',
+    async function () {
+        halamanAktif = 1;
+        await ambilDataSiswa();
+
+        tampilkanPesan(
+            'Data berhasil diperbarui',
+            'sukses'
+        );
+    }
+);
+
+function aktifkanDarkMode() {
+    document.body.classList.add('dark-mode');
+
+    darkModeIcon.textContent = '☀';
+    darkModeText.textContent = 'Light Mode';
+
+    localStorage.setItem(
+        'studentTheme',
+        'dark'
+    );
+}
+
+function nonaktifkanDarkMode() {
+    document.body.classList.remove('dark-mode');
+
+    darkModeIcon.textContent = '☾';
+    darkModeText.textContent = 'Dark Mode';
+
+    localStorage.setItem(
+        'studentTheme',
+        'light'
+    );
+}
+
+btnDarkMode.addEventListener(
+    'click',
+    function () {
+        const sedangDarkMode =
+            document.body.classList.contains(
+                'dark-mode'
+            );
+
+        if (sedangDarkMode) {
+            nonaktifkanDarkMode();
+        } else {
+            aktifkanDarkMode();
+        }
+    }
+);
+
+document.addEventListener(
+    'keydown',
+    function (event) {
+        if (
+            event.key === 'Escape' &&
+            modalSiswa.classList.contains('active')
+        ) {
+            tutupModal();
+        }
+    }
+);
+
+const semuaMenu =
+    document.querySelectorAll('.nav-link');
 
 semuaMenu.forEach(function (menu) {
-    menu.addEventListener('click', function () {
-        semuaMenu.forEach(function (item) {
-            item.classList.remove('active');
-        });
+    menu.addEventListener(
+        'click',
+        function () {
+            semuaMenu.forEach(
+                function (item) {
+                    item.classList.remove(
+                        'active'
+                    );
+                }
+            );
 
-        menu.classList.add('active');
-    });
+            menu.classList.add('active');
+        }
+    );
 });
+
+const temaTersimpan =
+    localStorage.getItem('studentTheme');
+
+if (temaTersimpan === 'dark') {
+    aktifkanDarkMode();
+}
 
 ambilDataSiswa();

@@ -13,7 +13,6 @@
 
     <div class="app">
 
-        <!-- SIDEBAR -->
         <aside class="sidebar">
 
             <div class="brand">
@@ -46,6 +45,15 @@
                     <span>＋</span>
                     Tambah Siswa
                 </button>
+
+                <button
+                    type="button"
+                    id="btnDarkMode"
+                    class="nav-link nav-button"
+                >
+                    <span id="darkModeIcon">☾</span>
+                    <span id="darkModeText">Dark Mode</span>
+                </button>
             </nav>
 
             <div class="profile">
@@ -59,10 +67,8 @@
 
         </aside>
 
-        <!-- KONTEN UTAMA -->
         <main class="content" id="dashboard">
 
-            <!-- HEADER -->
             <header class="topbar">
 
                 <div>
@@ -86,10 +92,10 @@
 
             </header>
 
-            <!-- KARTU RINGKASAN -->
             <section class="stats">
 
                 <article class="stat-card stat-primary">
+
                     <div class="stat-icon">♟</div>
 
                     <div>
@@ -97,9 +103,11 @@
                         <h2 id="totalSiswa">0</h2>
                         <small>Siswa tersimpan</small>
                     </div>
+
                 </article>
 
                 <article class="stat-card">
+
                     <div class="stat-icon icon-green">●</div>
 
                     <div>
@@ -111,9 +119,11 @@
 
                         <small>Express REST API</small>
                     </div>
+
                 </article>
 
                 <article class="stat-card">
+
                     <div class="stat-icon icon-orange">◆</div>
 
                     <div>
@@ -125,14 +135,13 @@
 
                         <small>MySQL db_sekolah</small>
                     </div>
+
                 </article>
 
             </section>
 
-            <!-- PESAN -->
             <div id="pesan"></div>
 
-            <!-- DATA SISWA -->
             <section class="card table-card" id="dataSiswa">
 
                 <div class="table-header">
@@ -173,6 +182,49 @@
 
                 </div>
 
+                <div class="table-tools">
+
+                    <div class="search-box">
+
+                        <span>⌕</span>
+
+                        <input
+                            type="search"
+                            id="inputPencarian"
+                            placeholder="Cari nama atau NIS..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <div class="filter-box">
+
+                        <label for="filterKelas">
+                            Filter kelas
+                        </label>
+
+                        <select id="filterKelas">
+                            <option value="">Semua kelas</option>
+                        </select>
+
+                    </div>
+
+                    <div class="page-size-box">
+
+                        <label for="jumlahPerHalaman">
+                            Tampilkan
+                        </label>
+
+                        <select id="jumlahPerHalaman">
+                            <option value="5">5 data</option>
+                            <option value="10">10 data</option>
+                            <option value="20">20 data</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
                 <div class="table-wrap">
 
                     <table>
@@ -203,6 +255,36 @@
 
                 </div>
 
+                <div class="pagination-wrapper">
+
+                    <p id="paginationInfo">
+                        Menampilkan 0 data
+                    </p>
+
+                    <div class="pagination">
+
+                        <button
+                            type="button"
+                            id="btnSebelumnya"
+                            class="pagination-button"
+                        >
+                            ‹ Sebelumnya
+                        </button>
+
+                        <div id="nomorHalaman" class="page-numbers"></div>
+
+                        <button
+                            type="button"
+                            id="btnBerikutnya"
+                            class="pagination-button"
+                        >
+                            Berikutnya ›
+                        </button>
+
+                    </div>
+
+                </div>
+
             </section>
 
             <footer>
@@ -213,7 +295,6 @@
 
     </div>
 
-    <!-- MODAL FORM SISWA -->
     <div id="modalSiswa" class="modal">
 
         <div class="modal-overlay" id="modalOverlay"></div>
@@ -227,7 +308,9 @@
 
                     <h2 id="judulForm">Tambah Siswa</h2>
 
-                    <p>Masukkan data siswa dengan lengkap.</p>
+                    <p>
+                        Masukkan data siswa dengan lengkap.
+                    </p>
                 </div>
 
                 <button
@@ -241,6 +324,8 @@
 
             </div>
 
+            <div id="pesanModal"></div>
+
             <form id="studentForm">
 
                 <input type="hidden" id="siswaId">
@@ -248,51 +333,82 @@
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label for="nis">NIS</label>
+
+                        <label for="nis">
+                            NIS
+                        </label>
 
                         <input
                             type="text"
                             id="nis"
                             placeholder="Masukkan NIS"
+                            maxlength="20"
                             required
                         >
+
+                        <small class="input-error" id="errorNis"></small>
+
                     </div>
 
                     <div class="form-group">
-                        <label for="nama">Nama</label>
+
+                        <label for="nama">
+                            Nama
+                        </label>
 
                         <input
                             type="text"
                             id="nama"
                             placeholder="Masukkan nama siswa"
+                            maxlength="100"
                             required
                         >
+
+                        <small class="input-error" id="errorNama"></small>
+
                     </div>
 
                     <div class="form-group">
-                        <label for="kelas">Kelas</label>
+
+                        <label for="kelas">
+                            Kelas
+                        </label>
 
                         <input
                             type="text"
                             id="kelas"
                             placeholder="Contoh: XII RPL 1"
+                            maxlength="50"
                             required
                         >
+
+                        <small class="input-error" id="errorKelas"></small>
+
                     </div>
 
                     <div class="form-group">
-                        <label for="jurusan">Jurusan</label>
+
+                        <label for="jurusan">
+                            Jurusan
+                        </label>
 
                         <input
                             type="text"
                             id="jurusan"
                             placeholder="Masukkan jurusan"
+                            maxlength="100"
                             required
                         >
+
+                        <small class="input-error" id="errorJurusan"></small>
+
                     </div>
 
                     <div class="form-group form-full">
-                        <label for="alamat">Alamat</label>
+
+                        <label for="alamat">
+                            Alamat
+                        </label>
 
                         <textarea
                             id="alamat"
@@ -300,6 +416,9 @@
                             placeholder="Masukkan alamat siswa"
                             required
                         ></textarea>
+
+                        <small class="input-error" id="errorAlamat"></small>
+
                     </div>
 
                 </div>
@@ -325,6 +444,18 @@
                 </div>
 
             </form>
+
+        </div>
+
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+
+        <div class="loading-box">
+
+            <div class="spinner"></div>
+
+            <p>Memproses data...</p>
 
         </div>
 

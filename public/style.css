@@ -1,4 +1,4 @@
-/* RESET */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,7 +25,7 @@ textarea {
     min-height: 100vh;
 }
 
-/* SIDEBAR */
+
 
 .sidebar {
     position: fixed;
@@ -173,7 +173,7 @@ textarea {
     color: #fecdd3;
 }
 
-/* KONTEN UTAMA */
+
 
 .content {
     min-height: 100vh;
@@ -657,9 +657,7 @@ footer {
         flex-direction: column;
     }
 }
-/* ========================================
-   TOMBOL SIDEBAR
-======================================== */
+
 
 .nav-button {
     width: 100%;
@@ -673,9 +671,7 @@ footer {
     cursor: pointer;
 }
 
-/* ========================================
-   MODAL FORM SISWA
-======================================== */
+
 
 .modal {
     position: fixed;
@@ -846,5 +842,322 @@ body.modal-open {
 
     .table-actions .btn-primary {
         flex: 1;
+    }
+}
+.table-tools {
+    padding: 18px 27px;
+    border-top: 1px solid #edf0f4;
+    background: #fafbfe;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.search-box {
+    min-width: 260px;
+    flex: 1;
+    position: relative;
+}
+
+.search-box span {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8791a3;
+    font-size: 18px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border: 1px solid #dce0e8;
+    border-radius: 10px;
+    outline: none;
+    background: white;
+    color: #172033;
+}
+
+.search-box input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.07);
+}
+
+.filter-box,
+.page-size-box {
+    display: grid;
+    gap: 6px;
+}
+
+.filter-box label,
+.page-size-box label {
+    color: #778198;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.filter-box select,
+.page-size-box select {
+    padding: 11px 35px 11px 12px;
+    border: 1px solid #dce0e8;
+    border-radius: 10px;
+    outline: none;
+    background: white;
+    color: #172033;
+    cursor: pointer;
+}
+
+.pagination-wrapper {
+    padding: 17px 27px;
+    border-top: 1px solid #edf0f4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.pagination-wrapper p {
+    color: #778198;
+    font-size: 12px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-button,
+.page-number {
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #e2e5ec;
+    border-radius: 8px;
+    background: white;
+    color: #596579;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.page-number {
+    min-width: 36px;
+}
+
+.page-number.active {
+    border-color: #c91f28;
+    background: #c91f28;
+    color: white;
+}
+
+.pagination-button:hover:not(:disabled),
+.page-number:hover:not(.active) {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #b91c1c;
+}
+
+.pagination-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.input-error {
+    display: block;
+    min-height: 15px;
+    margin-top: 5px;
+    color: #dc2626;
+    font-size: 10px;
+}
+
+.input-invalid {
+    border-color: #dc2626 !important;
+    background: #fff7f7 !important;
+}
+
+.nis-badge {
+    padding: 5px 9px;
+    border-radius: 7px;
+    background: #f1f3f7;
+    color: #525e72;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    visibility: hidden;
+    opacity: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    transition: 0.2s;
+}
+
+.loading-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.loading-box {
+    min-width: 190px;
+    padding: 25px;
+    border-radius: 16px;
+    background: white;
+    display: grid;
+    place-items: center;
+    gap: 13px;
+    box-shadow: 0 20px 55px rgba(15, 23, 42, 0.25);
+}
+
+.loading-box p {
+    color: #596579;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.spinner,
+.spinner-small {
+    border-radius: 50%;
+    border: 3px solid #fee2e2;
+    border-top-color: #c91f28;
+    animation: berputar 0.7s linear infinite;
+}
+
+.spinner {
+    width: 38px;
+    height: 38px;
+}
+
+.spinner-small {
+    width: 22px;
+    height: 22px;
+}
+
+.table-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+@keyframes berputar {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+body.dark-mode {
+    background: #111827;
+    color: #f8fafc;
+}
+
+body.dark-mode .content {
+    background: #111827;
+}
+
+body.dark-mode .card,
+body.dark-mode .stat-card,
+body.dark-mode .admin-profile,
+body.dark-mode .modal-content,
+body.dark-mode .loading-box {
+    border-color: #334155;
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+body.dark-mode .stat-primary {
+    background: linear-gradient(135deg, #df3038, #991b1b);
+}
+
+body.dark-mode .table-tools,
+body.dark-mode th {
+    border-color: #334155;
+    background: #172033;
+    color: #cbd5e1;
+}
+
+body.dark-mode td,
+body.dark-mode .table-header,
+body.dark-mode .pagination-wrapper,
+body.dark-mode .modal-header {
+    border-color: #334155;
+}
+
+body.dark-mode tbody tr:hover {
+    background: #263449;
+}
+
+body.dark-mode .student-name {
+    color: #f8fafc;
+}
+
+body.dark-mode .search-box input,
+body.dark-mode select,
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea,
+body.dark-mode .pagination-button,
+body.dark-mode .page-number {
+    border-color: #475569;
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+body.dark-mode .page-number.active {
+    border-color: #dc2626;
+    background: #dc2626;
+}
+
+body.dark-mode .subtitle,
+body.dark-mode .table-header p,
+body.dark-mode .modal-header p:last-child,
+body.dark-mode .pagination-wrapper p,
+body.dark-mode .stat-card p,
+body.dark-mode .stat-card small,
+body.dark-mode footer {
+    color: #94a3b8;
+}
+
+body.dark-mode .nis-badge {
+    background: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 850px) {
+    .table-tools {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .search-box {
+        min-width: 0;
+    }
+
+    .pagination-wrapper {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pagination {
+        width: 100%;
+        overflow-x: auto;
     }
 }
