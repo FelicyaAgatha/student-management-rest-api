@@ -7,7 +7,7 @@ const multer = require('multer');
 const database = require('./config/database');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const folderUpload = path.join(
     __dirname,
